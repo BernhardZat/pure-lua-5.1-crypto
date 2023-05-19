@@ -1,4 +1,5 @@
 -- Copyright (c) 2023 BernhardZat  -- see LICENSE file
+-- all representations are little endian
 
 local number_to_bytestring = function(num, n)
 	n = n or math.floor(math.log(num) / math.log(0x100) + 1);
@@ -26,6 +27,7 @@ local bytetable_to_bytestring = function(t)
 	end
 	return s;
 end
+
 local bytestring_to_bytetable = function(s, zero_based)
 	local t = {};
 	local j = zero_based and 1 or 0;
@@ -35,9 +37,18 @@ local bytestring_to_bytetable = function(s, zero_based)
 	return t;
 end
 
+local bytetable_to_number = function(t)
+	local num = 0;
+	for i = 0, #t - (t[0] and 0 or 1) do
+	  num = num + t[#t - i] * 0x100 ^ i;
+	end
+	return num;
+end
+
 _G.Util = {
 	number_to_bytestring = number_to_bytestring,
 	bytestring_to_number = bytestring_to_number,
 	bytetable_to_bytestring = bytetable_to_bytestring,
 	bytestring_to_bytetable = bytestring_to_bytetable,
+	bytetable_to_number = bytetable_to_number,
 }
