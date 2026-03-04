@@ -1,22 +1,46 @@
-# Pure Lua 5.1 cryptographic primitives 
-Small crypto library written in pure Lua 5.1 which includes X25519, ChaCha20, Shamir's Secret Sharing and more.
+# Pure Lua 5.1 Cryptographic Primitives
 
-This library includes modules for:
+A lightweight cryptography library implemented entirely in **pure Lua 5.1**, providing modern primitives such as **X25519**, **ChaCha20**, **XChaCha20**, and **BLAKE2s** without requiring any C extensions.
 
-- X25519 elliptic curve Diffie-Hellman
-- ChaCha20 stream cipher
-- Shamir's Secret Sharing Scheme
-- Base64 encoding
-- GF256 finite field arithmetic
-- Bitwise operations
-- Matrix operations
+This library is intended for environments where only Lua 5.1 is available - such as embedded systems, sandboxed runtimes, or legacy applications.
 
-# Objective
-Some applications only support older versions of Lua and do not allow C bindings. Most existing Lua crypto libraries are either not pure Lua, or are for newer versions of Lua.
-See also: https://lua-users.org/wiki/CryptographyStuff
+## Included Modules
 
-Lua 5.1 doesn't have integer types and no bitwise operations. This makes it difficult to implement cryptographic primitives.
-This library circumvents these limitations by emulating bitwise operations arithmetically. Obviously this results in poorer performance, compared to newer versions of Lua.
+### Cryptographic primitives
+- **X25519** - Elliptic‑curve Diffie–Hellman key agreement  
+- **ChaCha20** - Stream cipher  
+- **XChaCha20** - Extended‑nonce stream cipher  
+- **ChaCha20‑based PRNG** - Pseudorandom number generator  
+- **BLAKE2s** - Cryptographic hash function (including keyed mode)
 
-# In the future
-This library is still missing a hash function. I plan adding BLAKE3 as a hash function in the future.
+### Utility modules
+- **Base64** - encoding and decoding  
+- **Bitwise operations** - implemented arithmetically and using lookup tables 
+- **Miscellaneous helper functions**
+
+### Tests
+- Modules include test coverage, including official **RFC test vectors** where applicable.
+
+An earlier version of this library also included Galois‑field arithmetic, matrix operations, and Shamir’s Secret Sharing. These may return in future releases once they match the consistency of the current codebase.
+
+## Objective
+
+Some Lua environments still rely on **Lua 5.1** and do not allow loading native C modules. Existing Lua cryptography libraries often depend on C bindings or target newer Lua versions.
+
+Lua 5.1 lacks integer types and built‑in bitwise operators, which makes implementing modern cryptographic primitives challenging. This library works around these limitations by emulating bitwise operations using arithmetic. While this approach is slower than native implementations, it enables modern cryptography in pure Lua.
+
+Because Lua is an interpreted language, **constant‑time execution cannot be guaranteed**.
+
+## Future Plans
+
+Additional modules are planned, including:
+
+- Key derivation functions (e.g HKDF, etc.)  
+- Message authentication (e.g. Poly1305, HMAC)  
+- Password hashing (e.g. Argon2id)  
+- Digital signatures (e.g. Ed25519)
+
+## License
+
+Copyright (c) 2022–2026 BernhardZat  
+Licensed under the MIT License. See the LICENSE file for details.
