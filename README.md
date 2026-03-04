@@ -21,6 +21,9 @@ This library is intended for environments where only Lua 5.1 is available - such
 ### Tests
 - Modules include test coverage, including official **RFC test vectors** where applicable.
 
+### Examples
+- An `example.lua` script is included to demonstrate how the modules can be used together in a simple end‑to‑end flow.
+
 An earlier version of this library also included Galois‑field arithmetic, matrix operations, and Shamir’s Secret Sharing. These may return in future releases once they match the consistency of the current codebase.
 
 ## Objective
