@@ -18,7 +18,7 @@ local base64    = require("util.base64.base64");
 local passphrase = "correct horse battery staple";
 
 -- Hash the passphrase to obtain 32 bytes suitable for use as a private key
-local alice_private = blake2s.digest(passphrase, 32);
+local alice_private = blake2s.digest(passphrase);
 
 -- Compute Alice's public key
 local alice_public = x25519.get_public_key(alice_private);
@@ -42,7 +42,7 @@ local shared_secret = alice_shared;
 
 -- 4. Derive a ChaCha20 key from the shared secret (streaming API)
 
-local hasher = blake2s.init(32);          -- 32‑byte output
+local hasher = blake2s.init();            -- 32‑byte output
 hasher:update(shared_secret);             -- first input
 hasher:update("chacha20-key");            -- context for domain separation
 local session_key = hasher:finalize();

@@ -8,7 +8,7 @@ local function test(input, expected, key, message)
     key = key and unhex(key) or nil;
     input = input and unhex(input) or "";
     message = message and message or "a " .. input:len() .. "-byte message";
-    local output = hex(blake2s.digest(input, 32, key));
+    local output = hex(blake2s.digest(input, key, 32));
     assert_equal(message, output, expected);
 end
 

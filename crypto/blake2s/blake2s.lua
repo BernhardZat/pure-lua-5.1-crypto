@@ -122,7 +122,7 @@ local blake2s = {};
 blake2s.__index = blake2s;
 
 -- Initialize a new BLAKE2s state
-blake2s.init = function(outlen, key)
+blake2s.init = function(key, outlen)
     outlen = outlen and outlen or 32;
     local keylen = key and #key or 0;
 
@@ -213,9 +213,9 @@ function blake2s.finalize(self)
 end
 
 -- Convenience function: hash a string in one call
-function blake2s.digest(input, outlen, key)
+function blake2s.digest(input, key, outlen)
     outlen = outlen and outlen or 32;
-    local hasher = blake2s.init(outlen, key);
+    local hasher = blake2s.init(key, outlen);
     hasher:update(input);
     return hasher:finalize();
 end
