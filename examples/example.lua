@@ -12,12 +12,13 @@ local x25519    = require("crypto.x25519.x25519");
 local ChaCha20  = require("crypto.chacha20.chacha20");
 local Rng       = require("crypto.chacha20.chacha20rng");
 local base64    = require("util.base64.base64");
+local hkdf      = require("crypto.hkdf");
 
 -- 1. Alice chooses a passphrase
 
 local passphrase = "correct horse battery staple";
 
--- Hash the passphrase to obtain 32 bytes suitable for use as a private key
+-- Hash the passphrase to obtain 32 bytes for use as a private key
 local alice_private = blake2s.digest(passphrase);
 
 -- Compute Alice's public key
@@ -42,10 +43,9 @@ local shared_secret = alice_shared;
 
 -- 4. Derive a ChaCha20 key from the shared secret (streaming API)
 
-local hasher = blake2s.init();            -- 32‑byte output
-hasher:update(shared_secret);             -- first input
-hasher:update("chacha20-key");            -- context for domain separation
-local session_key = hasher:finalize();
+local hkdf_salt = "pure-lua-5.1-crypto example";
+local hkdf_info = "ChaCha20 session key";
+local session_key = hkdf.derive(shared_secret, hkdf_salt, hkdf_info, 32);
 
 -- 5. Encrypt a message using ChaCha20
 
