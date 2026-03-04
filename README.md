@@ -12,6 +12,7 @@ This library is intended for environments where only Lua 5.1 is available - such
 - **XChaCha20** - Extended‑nonce stream cipher  
 - **ChaCha20‑based PRNG** - Pseudorandom number generator  
 - **BLAKE2s** - Cryptographic hash function (including keyed mode)
+- **HKDF** - HMAC-based Extract-and-Expand Key Derivation Function using BLAKE2s
 
 ### Utility modules
 - **Base64** - encoding and decoding  
@@ -38,8 +39,7 @@ Because Lua is an interpreted language, **constant‑time execution cannot be gu
 
 Additional modules are planned, including:
 
-- Key derivation functions (e.g HKDF, etc.)  
-- Message authentication (e.g. Poly1305, HMAC)  
+- Message authentication (e.g. Poly1305)  
 - Password hashing (e.g. Argon2id)  
 - Digital signatures (e.g. Ed25519)
 
