@@ -219,18 +219,18 @@ local get_public_key = function (secret_key)
     return bytes_from_table(public_key);
 end
 
--- Compute shared key = secret_key * peer_public_key
-local get_shared_key = function (secret_key, peer_public_key)
+-- Compute shared secret = secret_key * peer_public_key
+local get_shared_secret = function (secret_key, peer_public_key)
     assert(#secret_key == 32 and #peer_public_key == 32, "X25519 key must be 32 bytes");
-    local shared_key = {};
-    scalarmult(shared_key, bytes_to_table(secret_key), bytes_to_table(peer_public_key));
-    return bytes_from_table(shared_key);
+    local shared_secret = {};
+    scalarmult(shared_secret, bytes_to_table(secret_key), bytes_to_table(peer_public_key));
+    return bytes_from_table(shared_secret);
 end
 
 -- Export public API
 local x25519 = {
     get_public_key = get_public_key,
-    get_shared_key = get_shared_key,
+    get_shared_secret = get_shared_secret,
 }
 
 return x25519;

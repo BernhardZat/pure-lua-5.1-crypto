@@ -23,15 +23,15 @@ local test_bob_public_key = function()
     assert_equal("X25519 Bob public key", hex(a), bob_public_key);
 end
 
--- Test that get_shared_key reproduces the RFC shared secret for Alice.
+-- Test that get_shared_secret reproduces the RFC shared secret for Alice.
 local test_alice_shared_secret = function()
-    local a = x25519.get_shared_key(unhex(alice_secret_key), unhex(bob_public_key));
+    local a = x25519.get_shared_secret(unhex(alice_secret_key), unhex(bob_public_key));
     assert_equal("X25519 Alice shared secret", hex(a), shared_secret);
 end
 
--- Test that get_shared_key reproduces the RFC shared secret for Bob.
+-- Test that get_shared_secret reproduces the RFC shared secret for Bob.
 local test_bob_shared_secret = function()
-    local a = x25519.get_shared_key(unhex(bob_secret_key), unhex(alice_public_key));
+    local a = x25519.get_shared_secret(unhex(bob_secret_key), unhex(alice_public_key));
     assert_equal("X25519 Bob shared secret", hex(a), shared_secret);
 end
 

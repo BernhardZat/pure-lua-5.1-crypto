@@ -34,8 +34,8 @@ local bob_public  = x25519.get_public_key(bob_private);
 
 -- 3. Both sides compute the shared secret
 
-local alice_shared = x25519.get_shared_key(alice_private, bob_public);
-local bob_shared   = x25519.get_shared_key(bob_private, alice_public);
+local alice_shared = x25519.get_shared_secret(alice_private, bob_public);
+local bob_shared   = x25519.get_shared_secret(bob_private, alice_public);
 
 assert(alice_shared == bob_shared, "Shared secrets do not match!");
 local shared_secret = alice_shared;
