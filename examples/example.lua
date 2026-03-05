@@ -41,7 +41,7 @@ local bob_shared   = x25519.get_shared_secret(bob_private, alice_public);
 assert(alice_shared == bob_shared, "Shared secrets do not match!");
 local shared_secret = alice_shared;
 
--- 4. Derive a ChaCha20 key from the shared secret (streaming API)
+-- 4. Derive a ChaCha20 key from the shared secret
 
 local hkdf_salt = "pure-lua-5.1-crypto example";
 local hkdf_info = "ChaCha20 session key";
