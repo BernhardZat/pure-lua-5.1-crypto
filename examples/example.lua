@@ -1,10 +1,14 @@
 -- -------------------------------------------------------------------------------
 -- Security Notice
--- 
+--
 -- This example demonstrates how to use the cryptographic primitives provided by
--- this library. The example uses simplified passphrase handling, deterministic
--- randomness, and a minimal key-derivation step for illustration. Real systems
--- require proper entropy and key-derivation.
+-- this library. For simplicity, it uses a passphrase-derived private key for
+-- Alice and deterministic randomness for Bob. Production systems must generate
+-- private keys from high-entropy randomness or use a proper password-based
+-- key-derivation function when deriving keys from passphrases.
+--
+-- The session and MAC keys derived via HKDF from the X25519 shared secret are
+-- representative of real-world usage.
 -- -------------------------------------------------------------------------------
 
 local blake2s   = require("crypto.blake2s.blake2s");
@@ -44,23 +48,45 @@ local shared_secret = alice_shared;
 -- 4. Derive a ChaCha20 key from the shared secret
 
 local hkdf_salt = "pure-lua-5.1-crypto example";
-local hkdf_info = "ChaCha20 session key";
-local session_key = hkdf.derive(shared_secret, hkdf_salt, hkdf_info, 32);
+local session_info = "ChaCha20 session key";
+local session_key = hkdf.derive(shared_secret, hkdf_salt, session_info, 32);
 
 -- 5. Encrypt a message using ChaCha20
 
-local nonce = rng:next_bytes(12);  -- ChaCha20 requires 12-byte nonce
+-- 12-byte nonce for ChaCha20, must not be reused with the same key
+local nonce = hkdf.derive(shared_secret, hkdf_salt, "nonce", 12)
 local cipher = ChaCha20.new(session_key, nonce);
 
 local plaintext = "Hello Bob, this is Alice!";
 local ciphertext = cipher:apply_keystream(plaintext);
 
--- 6. Decrypt the message (for demonstration)
+-- 6. Derive a MAC key using HKDF with a different context string and compute a MAC of the ciphertext
 
-local decipher = ChaCha20.new(session_key, nonce);
-local decrypted = decipher:apply_keystream(ciphertext);
+local mac_info = "BLAKE2s MAC key"
+local mac_key = hkdf.derive(shared_secret, hkdf_salt, mac_info, 32)
+local mac = blake2s.digest(ciphertext, mac_key);
 
--- 7. Print results in Base64 for readability
+-- 7. Construct the transmitted message and send it to Bob
+
+local transmitted = nonce .. mac .. ciphertext;
+
+-- 8. Bob receives the message, extracts the nonce, MAC, and ciphertext
+
+local received_nonce = transmitted:sub(1, 12);      -- First 12 bytes are the nonce
+local received_mac = transmitted:sub(13, 44);       -- Next 32 bytes are the MAC (BLAKE2s produces a 32-byte hash)
+local received_ciphertext = transmitted:sub(45);    -- The rest is the ciphertext
+
+-- 9. Bob verifies the MAC
+
+local expected_mac = blake2s.digest(received_ciphertext, mac_key);
+assert(received_mac == expected_mac, "MAC verification failed!");
+
+-- 10. Bob decrypts the message
+
+local bob_cipher = ChaCha20.new(session_key, received_nonce);
+local decrypted = bob_cipher:apply_keystream(received_ciphertext);
+
+-- Print results in Base64 for readability
 
 print("=== Alice ===");
 print("Private key: " .. base64.encode(alice_private));
@@ -76,7 +102,11 @@ print(base64.encode(shared_secret));
 print("\n=== Session Key (ChaCha20) ===");
 print(base64.encode(session_key));
 
+print("\n=== MAC Key (BLAKE2s) ===");
+print(base64.encode(mac_key));
+
 print("\n=== Encryption ===");
 print("Nonce      : " .. base64.encode(nonce));
 print("Ciphertext : " .. base64.encode(ciphertext));
+print("MAC        : " .. base64.encode(mac));
 print("Decrypted  : " .. decrypted);
