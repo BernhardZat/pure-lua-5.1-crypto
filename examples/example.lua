@@ -54,7 +54,7 @@ local session_key = hkdf.derive(shared_secret, hkdf_salt, session_info, 32);
 -- 5. Encrypt a message using ChaCha20
 
 -- 12-byte nonce for ChaCha20, must not be reused with the same key
-local nonce = hkdf.derive(shared_secret, hkdf_salt, "nonce", 12)
+local nonce = hkdf.derive(shared_secret, hkdf_salt, "nonce", 12);
 local cipher = ChaCha20.new(session_key, nonce);
 
 local plaintext = "Hello Bob, this is Alice!";
@@ -62,8 +62,8 @@ local ciphertext = cipher:apply_keystream(plaintext);
 
 -- 6. Derive a MAC key using HKDF with a different context string and compute a MAC of the ciphertext
 
-local mac_info = "BLAKE2s MAC key"
-local mac_key = hkdf.derive(shared_secret, hkdf_salt, mac_info, 32)
+local mac_info = "BLAKE2s MAC key";
+local mac_key = hkdf.derive(shared_secret, hkdf_salt, mac_info, 32);
 local mac = blake2s.digest(ciphertext, mac_key);
 
 -- 7. Construct the transmitted message and send it to Bob
@@ -72,9 +72,9 @@ local transmitted = nonce .. mac .. ciphertext;
 
 -- 8. Bob receives the message, extracts the nonce, MAC, and ciphertext
 
-local received_nonce = transmitted:sub(1, 12);      -- First 12 bytes are the nonce
-local received_mac = transmitted:sub(13, 44);       -- Next 32 bytes are the MAC (BLAKE2s produces a 32-byte hash)
-local received_ciphertext = transmitted:sub(45);    -- The rest is the ciphertext
+local received_nonce = transmitted:sub(1, 12);   -- First 12 bytes are the nonce
+local received_mac = transmitted:sub(13, 44);    -- Next 32 bytes are the MAC (BLAKE2s produces a 32-byte hash)
+local received_ciphertext = transmitted:sub(45); -- The rest is the ciphertext
 
 -- 9. Bob verifies the MAC
 
